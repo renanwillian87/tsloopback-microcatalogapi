@@ -1,4 +1,5 @@
 import {inject} from '@loopback/core';
+import {ClassDecoratorFactory,MetadataInspector} from '@loopback/metadata';
 import {
   get, Request,
 
@@ -34,9 +35,22 @@ const PING_RESPONSE: ResponseObject = {
   },
 };
 
+interface MyClassMetada {
+  name: string;
+}
+
+function myClassDecorator(spec: MyClassMetada): ClassDecorator {
+  const factory = new ClassDecoratorFactory<MyClassMetada>(
+    'metada-data-my-class-decorator',
+    spec
+  );
+  return factory.create();
+}
+
 /**
  * A simple controller to bounce back http requests
  */
+@myClassDecorator({name: 'ping'})
 export class PingController {
   constructor(@inject(RestBindings.Http.REQUEST) private req: Request) { }
 
